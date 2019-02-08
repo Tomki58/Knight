@@ -4,17 +4,17 @@
 #include <iostream>
 
 using namespace std;
-// позиция на доске
+// field position
 using pos = pair<char, int>; 
 
-// валидация позиции
+// validation
 bool valid_position(pos next)
 {
 	return (next.first < 'a' || next.first > 'h'
 		|| next.second < 1 || next.second > 8) ? false : true;
 }
 
-// генератор позиций на поле
+// generator of position sequence 
 string test_generator(char& lit, int& num)
 {
 	if (!valid_position(pos{ lit, num })) { num = 1; lit = 'a'; }
@@ -36,20 +36,20 @@ int knight(std::string start, std::string finish)
 	pos cur_pos{ start[0], atoi(&start[1]) },
 					fin_pos{finish[0], atoi(&finish[1])};
 
-	auto dif_x = fin_pos.first - cur_pos.first; // разница по горизонтали
-	auto dif_y = fin_pos.second - cur_pos.second; // разница по вертикали
+	auto dif_x = fin_pos.first - cur_pos.first; // horizontal difference
+	auto dif_y = fin_pos.second - cur_pos.second; // vertical difference
 
-	int numberOfSteps{ 0 }; // количество шагов
+	int numberOfSteps{ 0 }; // steps number
 	
 
 	while (1)
 	{
 		int newDif_x, newDif_y;
 		int min_dif{ _MAX_INT_DIG };
-		vector<pos>* next_pos = new vector<pos>; // все возможные позиции
-		vector<pos>* golden_pos = new vector<pos>; // "золотые" позиции
+		vector<pos>* next_pos = new vector<pos>; // all possible positions
+		vector<pos>* golden_pos = new vector<pos>; // "golden" positions
 
-		// заполнение массива возможных позиций
+		// filling the vector of possible positions
 		if (valid_position({ cur_pos.first + 2, cur_pos.second + 1 }))
 			next_pos->push_back(pos{ cur_pos.first + 2, cur_pos.second + 1 });
 
@@ -74,7 +74,7 @@ int knight(std::string start, std::string finish)
 		if (valid_position({ cur_pos.first - 1, cur_pos.second - 2 }))
 			next_pos->push_back(pos{ cur_pos.first - 1, cur_pos.second - 2 });
 
-		// проход по каждой из возможных позиций с занесением в список "золотых"
+		// searching for the "golde" positions
 		for (auto& i : *next_pos)
 		{
 			if (i == fin_pos) return ++numberOfSteps;
@@ -83,7 +83,7 @@ int knight(std::string start, std::string finish)
 				golden_pos->emplace_back(i);
 		}
 
-		// проход по каждой из "золотых" позиций, чтобы сразу найти решение
+		// searching for the "golden" position with min difference 
 		if (!golden_pos->empty())
 			for (auto& i : *golden_pos)
 			{
@@ -94,10 +94,10 @@ int knight(std::string start, std::string finish)
 		if (min_dif != _MAX_INT_DIG)
 			return 1 + abs(min_dif) + numberOfSteps;
 
-		min_dif = abs(fin_pos.first - next_pos->at(0).first) + abs(fin_pos.second - next_pos->at(0).second); // сумма разниц координат
-		int min_idx = 0; // индекс позиции с минимальной суммой расстояний
+		min_dif = abs(fin_pos.first - next_pos->at(0).first) + abs(fin_pos.second - next_pos->at(0).second); // summ of positions difference
+		int min_idx = 0; // min difference index
 
-		// проход в сторону уменьшения суммы расстояний
+		// step to the minimum difference position
 		for (auto i = next_pos->begin() + 1; i != next_pos->end(); i++)
 		{
 			if (abs(fin_pos.first - (*i).first) + abs(fin_pos.second + (*i).second) < min_dif)
@@ -108,7 +108,7 @@ int knight(std::string start, std::string finish)
 			cur_pos = next_pos->at(min_idx);
 		}
 
-		numberOfSteps++; // окончание вычислений
+		numberOfSteps++; // increasing the result
 
 		delete next_pos;
 		delete golden_pos;
